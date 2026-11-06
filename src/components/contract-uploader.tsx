@@ -1,6 +1,6 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
+import { uploadPresigned } from "@vercel/blob/client";
 import { useRef, useState } from "react";
 import { registerContract } from "@/app/(painel)/actions";
 
@@ -19,8 +19,9 @@ export function ContractUploader({ studentId }: { studentId: string }) {
       }
       try {
         setProgress(0);
-        const safeName = file.name.replace(/[^\w.\-]+/g, "_");
-        const blob = await upload(`contratos/${studentId}/${safeName}`, file, {
+        // nome único: data + nome original higienizado
+        const base = file.name.replace(/\.pdf$/i, "").replace(/[^\w.\-]+/g, "_").slice(0, 80);
+        const blob = await uploadPresigned(`contratos/${studentId}/${Date.now()}-${base}.pdf`, file, {
           access: "private",
           handleUploadUrl: "/api/contratos/upload",
           contentType: "application/pdf",

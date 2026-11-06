@@ -13,7 +13,7 @@ Stack: Next.js 16 (App Router) · Neon Postgres + Drizzle ORM · Vercel Blob (pr
 1. **Importe o repositório** em [vercel.com/new](https://vercel.com/new).
 2. Na aba **Storage** do projeto:
    - **Neon** (Postgres) → conecte; cria `DATABASE_URL` e `DATABASE_URL_UNPOOLED`.
-   - **Blob** → crie um store com acesso **Private** e conecte; cria `BLOB_READ_WRITE_TOKEN`.
+   - **Blob** → crie um store com acesso **Private** e conecte; cria `BLOB_STORE_ID` (ou `BLOB_READ_WRITE_TOKEN` em stores antigos).
 3. Em **Settings → Environment Variables**, cadastre as demais variáveis de `.env.example`
    (`ADMIN_PASSWORD`, `AUTH_SECRET`, `CRON_SECRET`, `CORA_*`, `EVOLUTION_*`).
 4. Faça o deploy. O build roda as migrações do banco automaticamente (`npm run db:migrate`).
