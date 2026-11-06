@@ -11,6 +11,7 @@ export default async function DashboardPage() {
   const today = todayISO();
   const monthStart = `${today.slice(0, 7)}-01`;
 
+  const [coraOk, evolutionOk] = await Promise.all([isCoraConfigured(), isEvolutionConfigured()]);
   const [[activeCount], [openTotals], [lateTotals], [paidMonth], upcoming] = await Promise.all([
     db.select({ n: sql<number>`count(*)::int` }).from(students).where(eq(students.active, true)),
     db
@@ -45,11 +46,13 @@ export default async function DashboardPage() {
     <>
       <PageHeader title="Visão geral" subtitle={`Hoje: ${formatDate(today)}`} />
 
-      {(!isCoraConfigured() || !isEvolutionConfigured()) && (
+      {(!coraOk || !evolutionOk) && (
         <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-          {!isCoraConfigured() && <p>⚠️ Integração com a Cora não configurada — boletos não serão emitidos.</p>}
-          {!isEvolutionConfigured() && <p>⚠️ Evolution API não configurada — lembretes de WhatsApp não serão enviados.</p>}
-          <p className="mt-1">Veja as variáveis de ambiente necessárias no README.</p>
+          {!coraOk && <p>⚠️ Integração com a Cora não configurada — boletos não serão emitidos.</p>}
+          {!evolutionOk && <p>⚠️ Evolution API não configurada — lembretes de WhatsApp não serão enviados.</p>}
+          <Link href="/configuracoes/integracoes" className="mt-1 inline-block font-medium underline">
+            Cadastrar credenciais em Configurações → Integrações
+          </Link>
         </div>
       )}
 

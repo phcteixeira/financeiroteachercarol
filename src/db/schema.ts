@@ -116,3 +116,10 @@ export type Student = typeof students.$inferSelect;
 export type Contract = typeof contracts.$inferSelect;
 export type Charge = typeof charges.$inferSelect;
 export type Reminder = typeof reminders.$inferSelect;
+
+/** Credenciais de integrações (Cora, Evolution), criptografadas com AES-256-GCM. */
+export const credentials = pgTable("credentials", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

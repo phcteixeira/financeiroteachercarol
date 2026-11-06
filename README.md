@@ -15,19 +15,20 @@ Stack: Next.js 16 (App Router) · Neon Postgres + Drizzle ORM · Vercel Blob (pr
    - **Neon** (Postgres) → conecte; cria `DATABASE_URL` e `DATABASE_URL_UNPOOLED`.
    - **Blob** → crie um store com acesso **Private** e conecte; cria `BLOB_STORE_ID` (ou `BLOB_READ_WRITE_TOKEN` em stores antigos).
 3. Em **Settings → Environment Variables**, cadastre as demais variáveis de `.env.example`
-   (`ADMIN_PASSWORD`, `AUTH_SECRET`, `CRON_SECRET`, `CORA_*`, `EVOLUTION_*`).
+   (`ADMIN_PASSWORD`, `AUTH_SECRET`, `ENCRYPTION_KEY`, `CRON_SECRET`, `CORA_WEBHOOK_SECRET`).
 4. Faça o deploy. O build roda as migrações do banco automaticamente (`npm run db:migrate`).
-5. Acesse o painel com a senha `ADMIN_PASSWORD`.
+5. Acesse o painel com a senha `ADMIN_PASSWORD` e cadastre as credenciais da Cora e da Evolution em
+   **Configurações → Integrações**. Elas ficam no banco, criptografadas com `ENCRYPTION_KEY`; ao salvar, o painel
+   testa a conexão.
 
 ### Cora
 
 1. No app da Cora, gere as credenciais de **Integração Direta**: `client_id`, `certificate.pem` e `private-key.key`.
    Cada ambiente (stage/produção) tem seu próprio certificado.
-2. Cole o conteúdo dos arquivos em `CORA_CERTIFICATE` e `CORA_PRIVATE_KEY`
-   (PEM completo ou em base64: `base64 -w0 certificate.pem`).
-3. Use `CORA_ENV=stage` para testes e `CORA_ENV=production` para cobranças reais.
+2. Em **Configurações → Integrações**, escolha o ambiente (testes ou produção), informe o Client ID e
+   carregue os arquivos `.pem` e `.key` (ou cole o conteúdo).
 4. **Webhook**: cadastre na Cora (recurso `invoice`, eventos `paid`, `canceled` e `overdue`) a URL
-   mostrada em **Configurações** no painel:
+   mostrada em **Configurações → Integrações**:
    `https://SEU-DOMINIO/api/webhooks/cora?token=CORA_WEBHOOK_SECRET`.
    O painel nunca confia no conteúdo do webhook: ele sempre reconsulta o boleto na Cora.
    Mesmo sem webhook, a rotina diária e o botão "Sincronizar com a Cora" atualizam os status.
@@ -37,9 +38,9 @@ são configurados no painel.
 
 ### Evolution API (WhatsApp)
 
-Informe `EVOLUTION_API_URL`, `EVOLUTION_API_KEY` e o nome da instância conectada em `EVOLUTION_INSTANCE`.
+Em **Configurações → Integrações**, informe a URL da Evolution, a API key e o nome da instância conectada.
 O envio usa `POST /message/sendText/{instancia}` com `{ number, text }` (formato da v2).
-Em **Configurações** é possível ver o estado da conexão e enviar uma mensagem de teste.
+Na mesma página é possível ver o estado da conexão e enviar uma mensagem de teste.
 
 ### Rotina diária
 

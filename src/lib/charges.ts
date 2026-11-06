@@ -30,8 +30,8 @@ function invoiceFields(inv: CoraInvoice) {
 /** Registra (ou tenta novamente registrar) a cobrança na Cora. Em caso de falha, marca como "error". */
 export async function registerChargeOnCora(charge: Charge, student: Student, retry = false) {
   try {
-    if (!isCoraConfigured()) {
-      throw new Error("Integração Cora não configurada (CORA_CLIENT_ID, CORA_CERTIFICATE, CORA_PRIVATE_KEY).");
+    if (!(await isCoraConfigured())) {
+      throw new Error("Integração Cora não configurada. Cadastre as credenciais em Configurações → Integrações.");
     }
     if (!student.document) {
       throw new Error(`O aluno ${student.name} não tem CPF/CNPJ cadastrado (obrigatório para emitir boleto).`);
@@ -146,7 +146,7 @@ export async function syncOpenCharges() {
   let synced = 0;
   const errors: string[] = [];
 
-  if (isCoraConfigured()) {
+  if (await isCoraConfigured()) {
     const open = await db
       .select({ invoiceId: charges.coraInvoiceId })
       .from(charges)
