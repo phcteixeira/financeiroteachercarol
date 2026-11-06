@@ -1,7 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
+import { Spinner } from "./spinner";
+
+function PendingHint() {
+  const { pending } = useLinkStatus();
+  return pending ? <Spinner className="ml-2 inline h-3.5 w-3.5 text-indigo-500" /> : null;
+}
 
 const tabs = [
   { href: "/configuracoes", label: "Lembretes e boletos" },
@@ -25,6 +31,7 @@ export function SettingsTabs() {
             }`}
           >
             {t.label}
+            <PendingHint />
           </Link>
         );
       })}
